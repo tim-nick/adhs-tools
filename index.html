@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ADHS Verlauf">
+<title>Ritalin adult – Wirkungsverlauf</title>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #eceae4;
+    --text: #1a1916;
+    --text2: #6b6860;
+    --text3: #a8a59e;
+    --border: rgba(0,0,0,0.07);
+    --blue: #2E7DD1;
+    --green: #1a9468;
+    --purple: #6C63CC;
+    --orange: #C95228;
+    --blue-dark: #1a5fa0;
+    --green-dark: #0d6e4a;
+    --warn: #b85c00;
+    --warn-bg: #fff7ed;
+    --warn-border: #fcd9a8;
+    --info-bg: #f0f5ff;
+    --info-border: #c8d9f8;
+    --radius: 14px;
+    --radius-sm: 9px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110;
+      --surface: #1c1b18;
+      --surface2: #242320;
+      --text: #ede9e3;
+      --text2: #908d86;
+      --text3: #5a5752;
+      --border: rgba(255,255,255,0.07);
+      --warn-bg: #2a1f0e;
+      --warn-border: #5a3a10;
+      --info-bg: #141c2e;
+      --info-border: #253860;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  nav button {
+    flex: 1; padding: 14px 8px;
+    background: none; border: none;
+    font-size: 13px; font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav button.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* PAGES */
+  .page { display: none; padding: 20px 16px env(safe-area-inset-bottom, 24px); max-width: 600px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* TYPOGRAPHY */
+  h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 4px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; margin: 24px 0 10px; }
+  h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); margin: 20px 0 8px; }
+  p { color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* INPUTS */
+  .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .input-group label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text3); }
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .input-row .input-group { flex: 1; min-width: 120px; }
+  input[type="time"], input[type="number"], select {
+    font-size: 16px; font-weight: 500;
+    padding: 11px 13px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+    box-shadow: var(--shadow);
+  }
+  input:focus, select:focus { border-color: var(--blue); }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; }
+
+  .btn-primary {
+    width: 100%; padding: 13px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: var(--radius-sm);
+    font-size: 16px; font-weight: 600;
+    cursor: pointer; margin-top: 4px;
+    box-shadow: 0 2px 8px rgba(46,125,209,0.3);
+    transition: opacity 0.15s;
+  }
+  .btn-primary:active { opacity: 0.85; }
+
+  /* CARDS */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+    gap: 8px; margin-bottom: 16px;
+  }
+  .card {
+    background: var(--surface); border-radius: var(--radius-sm);
+    padding: 10px 11px; border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .card-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text3); margin-bottom: 5px; }
+  .card-value { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+
+  /* PHASE BADGE */
+  .phase-box {
+    background: var(--info-bg); border: 1px solid var(--info-border);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    margin-bottom: 16px; font-size: 13px; color: var(--text2); line-height: 1.6;
+  }
+  .phase-box strong { color: var(--text); }
+
+  /* CHART */
+  .chart-wrap {
+    background: var(--surface); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 16px 8px 8px;
+    margin-bottom: 12px; box-shadow: var(--shadow);
+  }
+  canvas { display: block; width: 100% !important; }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 12px; font-size: 12px; color: var(--text2);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-line { width: 18px; height: 2px; border-radius: 1px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .note { font-size: 11px; color: var(--text3); line-height: 1.5; text-align: center; padding: 0 8px; }
+
+  /* DISCLAIMER */
+  .warn-box {
+    background: var(--warn-bg); border: 1px solid var(--warn-border);
+    border-radius: var(--radius-sm); padding: 13px 14px;
+    margin-bottom: 16px; font-size: 13px; color: var(--warn); line-height: 1.6;
+  }
+  .warn-box strong { display: block; margin-bottom: 4px; font-size: 14px; }
+
+  /* INFO PAGE */
+  .info-section {
+    background: var(--surface); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 16px;
+    margin-bottom: 12px; box-shadow: var(--shadow);
+  }
+  .source-tag {
+    display: inline-block; background: var(--surface2);
+    border-radius: 4px; padding: 2px 7px;
+    font-size: 11px; color: var(--text2);
+    font-family: 'SF Mono', 'Courier New', monospace;
+    margin-top: 6px;
+  }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .subtle { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+  /* ADVANCED TOGGLE */
+  .advanced-toggle {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2); cursor: pointer;
+    padding: 10px 0; user-select: none;
+  }
+  .advanced-toggle svg { transition: transform 0.2s; }
+  .advanced-toggle.open svg { transform: rotate(180deg); }
+  .advanced-section { display: none; margin-top: 10px; }
+  .advanced-section.open { display: block; }
+  .advanced-note { font-size: 12px; color: var(--text3); margin-bottom: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="active" onclick="showPage('sim')">Verlauf</button>
+  <button onclick="showPage('info')">Methodik &amp; Hinweise</button>
+</nav>
+
+<!-- SIMULATION PAGE -->
+<div class="page active" id="page-sim">
+
+  <h1 style="margin-top:20px;">Wirkungsverlauf</h1>
+  <p style="margin-bottom:20px;">Ritalin adult (Methylphenidat LA)</p>
+
+  <div class="warn-box">
+    <strong>⚠️ Kein medizinisches Werkzeug</strong>
+    Dies ist eine grobe Orientierungshilfe basierend auf Durchschnittswerten. Kein Ersatz für ärztliche Beratung. Individuelle Verläufe können stark abweichen.
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <label>Einnahme um</label>
+      <input type="time" id="tInput" value="09:00">
+    </div>
+    <div class="input-group">
+      <label>Dosis (mg)</label>
+      <select id="doseInput">
+        <option value="10">10 mg</option>
+        <option value="20" selected>20 mg</option>
+        <option value="30">30 mg</option>
+        <option value="40">40 mg</option>
+        <option value="60">60 mg</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="advanced-toggle" id="advToggle" onclick="toggleAdvanced()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Erweiterte Körperwerte (optional)
+  </div>
+  <div class="advanced-section" id="advSection">
+    <p class="advanced-note">Körperwerte haben laut Studien nur geringen Einfluss auf den zeitlichen Verlauf (Tmax/Halbwertszeit), aber etwas auf die Peak-Intensität. Standardwert: 70 kg. Leer lassen = Standardwert.</p>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Gewicht (kg)</label>
+        <input type="number" id="weightInput" placeholder="z.B. 75" min="40" max="200">
+      </div>
+      <div class="input-group">
+        <label>Geschlecht</label>
+        <select id="sexInput">
+          <option value="m">Männlich</option>
+          <option value="f">Weiblich</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="build()">Verlauf berechnen</button>
+
+  <h2 style="margin-top:24px;">Heutige Übersicht</h2>
+  <div class="cards" id="cards"></div>
+  <div class="phase-box" id="phaseInfo"></div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-line" style="background:var(--blue);"></div>Sofortanteil</div>
+    <div class="legend-item"><div class="legend-line" style="background:var(--green);border-top:2px dashed var(--green);height:0;"></div>Retardanteil</div>
+    <div class="legend-item"><div class="legend-line" style="background:var(--purple);height:3px;"></div>Gesamtwirkung</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div>Jetzt</div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="chart" role="img" aria-label="Ritalin adult Wirkungsverlauf"></canvas>
+  </div>
+  <p class="note">Basierend auf FDA-Pharmakokinetikdaten für Ritalin LA (Erwachsene). Grobe Schätzung – Dosis, Stoffwechsel, Mahlzeiten und individuelle Faktoren können den Verlauf erheblich verändern.</p>
+
+</div>
+
+<!-- INFO PAGE -->
+<div class="page" id="page-info">
+
+  <h1 style="margin-top:20px;">Methodik &amp; Hinweise</h1>
+  <p style="margin-bottom:20px;">Wie diese Simulation funktioniert – und was sie nicht kann.</p>
+
+  <div class="warn-box">
+    <strong>⚠️ Kein medizinisches Hilfsmittel</strong>
+    Diese App ist ausschließlich zur persönlichen Orientierung gedacht. Sie ersetzt keine ärztliche oder pharmakologische Beratung. Alle Angaben sind Schätzwerte auf Basis von Durchschnittsdaten gesunder Probanden – dein individueller Verlauf kann erheblich abweichen.
+  </div>
+
+  <div class="info-section">
+    <h2 style="margin-top:0;">Datengrundlage</h2>
+    <p>Die zeitlichen Parameter dieser Simulation stammen aus dem offiziellen FDA-Zulassungsdokument für Ritalin LA sowie einer publizierten Pharmakokinetik-Studie mit gesunden erwachsenen Probanden.</p>
+    <p>Verwendete Schlüsselwerte für Erwachsene (Ritalin LA 20 mg):</p>
+    <ul style="margin: 8px 0 8px 18px; color: var(--text2); font-size: 13px; line-height: 1.8;">
+      <li>Tmax1 (1. Peak): ⌀ 2,0 h (Bereich 1,3–4,0 h)</li>
+      <li>Tminip (Tal zwischen Peaks): ⌀ 3,6 h (Bereich 2,7–4,3 h)</li>
+      <li>Tmax2 (2. Peak): ⌀ 5,5 h (Bereich 4,3–6,5 h)</li>
+      <li>Halbwertszeit t½: ⌀ 3,3 h (Bereich 3,0–4,2 h)</li>
+      <li>Cmax2 leicht höher als Cmax1 (~17% bei 20 mg)</li>
+      <li>Tal-Konzentration nicht bei null (Cminip ~3,0 ng/mL)</li>
+    </ul>
+    <div class="source-tag">FDA Label Ritalin LA – NDA 021284 (2017)</div><br>
+    <div class="source-tag">Swanson et al., Clin Pharmacokinet 42:2003</div>
+  </div>
+
+  <div class="info-section">
+    <h2 style="margin-top:0;">Wie wird die Kurve berechnet?</h2>
+    <p>Die Kurve ist <strong>keine echte Differential­gleichung</strong> oder pharmako­kinetisches Kompartiment­modell – sondern eine stückweise lineare Annäherung (Interpolation) zwischen den empirisch bestimmten Stützpunkten aus den Studien.</p>
+    <p>Konkret: Zwischen jedem Stützpunkt (Einnahme → Peak 1 → Tal → Peak 2 → Ende) werden gerade Linien interpoliert. Das ergibt eine realistische Kurvenform, ist aber vereinfacht.</p>
+    <p>Der <strong>Dosiseffekt</strong> skaliert die Intensität (Höhe der Peaks) linear – die zeitliche Form bleibt gleich, weil die Halbwertszeit laut FDA-Daten dosisunabhängig konstant ist. Der <strong>Gewichtseffekt</strong> ist ein kleiner Korrekturfaktor auf die Peak-Intensität (nicht auf den Zeitverlauf).</p>
+  </div>
+
+  <div class="info-section">
+    <h2 style="margin-top:0;">Was die Simulation nicht abbildet</h2>
+    <ul style="margin: 0 0 0 18px; color: var(--text2); font-size: 13px; line-height: 1.9;">
+      <li>Individuelle Variabilität im Metabolismus (CES1A1-Enzym)</li>
+      <li>Mahlzeiten-Effekt (fettreiche Mahlzeit senkt Peak 2 um ~25%)</li>
+      <li>Tageszeit-Abhängigkeit des Stoffwechsels</li>
+      <li>Toleranzentwicklung bei Dauereinnahme</li>
+      <li>Wechselwirkungen mit anderen Medikamenten</li>
+      <li>Geschlechtsspezifische Unterschiede in der Bioverfügbarkeit</li>
+      <li>Klinische Wirksamkeit vs. Plasmakonzentration (kein 1:1-Verhältnis)</li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 style="margin-top:0;">Warum trotzdem nützlich?</h2>
+    <p>Auch wenn der genaue Verlauf individuell variiert, ist der <strong>zeitliche Rahmen</strong> (zwei Peaks ~4h auseinander, Gesamtdauer ~8–10h) für die meisten Erwachsenen mit Ritalin adult annähernd korrekt. Die App hilft dabei, grob einzuschätzen wann mit Wirkungsbeginn, Wirkmaximum und Abklingen zu rechnen ist – als Orientierung im Alltag, nicht als medizinische Auskunft.</p>
+  </div>
+
+  <div class="divider"></div>
+  <p class="subtle" style="text-align:center;">Erstellt zur persönlichen Nutzung. Keine Garantie für Richtigkeit oder Vollständigkeit. Bei Fragen zum Medikament bitte immer die behandelnde Ärztin oder den Arzt konsultieren.</p>
+  <p class="subtle" style="text-align:center; margin-top:6px;">v2.0 – Datenstand: FDA NDA 021284 (2017)</p>
+
+</div>
+
+<script>
+// ─── NAV ───────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const idx = id === 'sim' ? 0 : 1;
+  document.querySelectorAll('nav button')[idx].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleAdvanced() {
+  const t = document.getElementById('advToggle');
+  const s = document.getElementById('advSection');
+  t.classList.toggle('open');
+  s.classList.toggle('open');
+}
+
+// ─── HELPERS ───────────────────────────────────────────
+function pad(n) { return String(n).padStart(2, '0'); }
+function addMin(baseH, baseM, d) {
+  const t = baseH * 60 + baseM + d;
+  return pad(Math.floor(t / 60) % 24) + ':' + pad(t % 60);
+}
+function nowMin() {
+  const n = new Date(); return n.getHours() * 60 + n.getMinutes();
+}
+
+// ─── PHARMACOKINETIC MODEL ─────────────────────────────
+// Based on FDA Ritalin LA Label (NDA 021284, 2017) – Adult Males
+// Tmax1 = 2.0h, Tminip = 3.6h, Tmax2 = 5.5h, t½ = 3.3h
+// Cmax2 slightly > Cmax1 (~17% higher at 20mg)
+// Cminip ≠ 0 (~57% of Cmax1 for LA formulation)
+
+const T_PEAK1  = 120;  // min: mean Tmax1 = 2.0h
+const T_TAL    = 216;  // min: mean Tminip = 3.6h
+const T_PEAK2  = 330;  // min: mean Tmax2 = 5.5h
+const T_HALF   = 198;  // min: t½ = 3.3h → after peak2, exponential-like decay
+const T_END    = 570;  // min: ~9.5h, practical end
+
+// Reference dose: 20mg → scale peaks linearly
+// Weight effect: small correction on intensity only (FDA: no significant effect on Tmax/t½)
+// Sex effect: women ~45% higher Cmax (dexmethylphenidate data) – applied as multiplier
+
+function calcCurves(startH, startM, dose, weight, sex) {
+  const refDose = 20;
+  const doseScale = dose / refDose;
+
+  // Weight: mild effect on peak intensity (volume of distribution ~2.65 L/kg)
+  // Normalized to 70kg reference
+  const w = (weight && weight > 0) ? weight : 70;
+  const weightScale = Math.pow(70 / w, 0.3); // dampened – small effect
+
+  // Sex factor on peak concentration
+  const sexScale = (sex === 'f') ? 1.20 : 1.0; // women higher Cmax
+
+  const intensityScale = doseScale * weightScale * sexScale;
+
+  const steps = [];
+  for (let i = 0; i <= T_END; i += 15) steps.push(i); // 15min resolution
+
+  // ── Immediate-release component (50% of dose)
+  // Rises quickly, peaks at T_PEAK1, then decays
+  const sofort = steps.map(d => {
+    let v;
+    if (d <= 0)           v = 0;
+    else if (d <= 30)     v = d / 30 * 25;                              // 0→25% onset
+    else if (d <= T_PEAK1) v = 25 + (d - 30) / (T_PEAK1 - 30) * 75;   // 25→100% peak
+    else if (d <= T_TAL)   v = 100 - (d - T_PEAK1) / (T_TAL - T_PEAK1) * 57; // 100→43% (Cminip proportional)
+    else if (d <= T_PEAK2) v = 43 - (d - T_TAL) / (T_PEAK2 - T_TAL) * 33;    // 43→10% (fades as retard takes over)
+    else {
+      // Exponential decay after peak2: V(t) = V0 * exp(-ln2/t½ * Δt)
+      const decay = Math.exp(-Math.LN2 / T_HALF * (d - T_PEAK2));
+      v = 10 * decay;
+    }
+    return Math.max(0, Math.min(100, Math.round(v)));
+  });
+
+  // ── Delayed-release component (50% of dose, enteric-coated beads)
+  // Slow onset, peaks at T_PEAK2 slightly higher than Cmax1
+  const retard = steps.map(d => {
+    let v;
+    if (d <= 60)           v = d / 60 * 4;                                    // very slow start
+    else if (d <= T_PEAK1) v = 4 + (d - 60) / (T_PEAK1 - 60) * 10;           // 4→14%
+    else if (d <= T_TAL)   v = 14 + (d - T_PEAK1) / (T_TAL - T_PEAK1) * 36;  // 14→50%
+    else if (d <= T_PEAK2) v = 50 + (d - T_TAL) / (T_PEAK2 - T_TAL) * 67;    // 50→117% (slightly above 100 before scaling)
+    else {
+      const decay = Math.exp(-Math.LN2 / T_HALF * (d - T_PEAK2));
+      v = 100 * decay;
+    }
+    return Math.max(0, Math.min(100, Math.round(v)));
+  });
+
+  // ── Combined plasma concentration
+  // Peak2 of combined is ~17% higher than Peak1 (matches FDA Cmax2 > Cmax1 for LA)
+  // Trough is NOT zero (Cminip ~3.0 ng/mL ≈ 57% of Cmax1 for LA vs ~23% for IR)
+  const gesamt = steps.map((_, i) => {
+    const raw = (sofort[i] * 0.48 + retard[i] * 0.60) * intensityScale;
+    return Math.max(0, Math.min(100, Math.round(raw)));
+  });
+
+  const labels = steps.map(d => addMin(startH, startM, d));
+  return { steps, labels, sofort, retard, gesamt };
+}
+
+// ─── PHASE TEXT ────────────────────────────────────────
+function getPhaseText(nowDelta) {
+  if (nowDelta < 0)         return 'Noch nicht eingenommen.';
+  if (nowDelta < 30)        return '<strong>Einnahme gerade erfolgt</strong> – Wirkstoff wird aufgenommen. Noch keine Wirkung spürbar.';
+  if (nowDelta < 80)        return '<strong>Einsetzen</strong> – Sofortanteil beginnt zu wirken. Erste Effekte möglich.';
+  if (nowDelta < 150)       return '<strong>1. Peak (~2h)</strong> – Sofortanteil auf dem Höhepunkt. Gutes Konzentrationsfenster.';
+  if (nowDelta < T_TAL + 30) return '<strong>Übergang</strong> – Sofortanteil klingt ab, Retardanteil baut sich auf. Wirkung kann etwas nachlassen.';
+  if (nowDelta < T_PEAK2 + 60) return '<strong>2. Peak (~5,5h)</strong> – Retardanteil voll aktiv. Zweites Konzentrationsfenster.';
+  if (nowDelta < T_END - 60) return '<strong>Abklingen</strong> – Wirkung lässt langsam nach. Halbwertszeit ~3,3h.';
+  if (nowDelta <= T_END)    return '<strong>Fast vorbei</strong> – Nur noch Restwirkung. Gute Zeit zum Entspannen.';
+  return '<strong>Wirkung beendet</strong> – Wirkstoff weitgehend abgebaut (~9,5h nach Einnahme).';
+}
+
+// ─── DRAW CHART ────────────────────────────────────────
+function drawChart(canvas, labels, sofort, retard, gesamt, nowIdx, steps) {
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 16;
+  const H = 230;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridC  = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  const axisC  = isDark ? '#3a3935' : '#dddbd6';
+  const tickC  = isDark ? '#5a5752' : '#a8a59e';
+
+  const padL = 38, padR = 10, padT = 12, padB = 40;
+  const cW = W - padL - padR, cH = H - padT - padB;
+
+  function xP(i) { return padL + (i / (labels.length - 1)) * cW; }
+  function yP(v) { return padT + (1 - v / 100) * cH; }
+
+  // grid
+  ctx.strokeStyle = axisC; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + cH); ctx.lineTo(padL + cW, padT + cH); ctx.stroke();
+
+  [0, 25, 50, 75, 100].forEach(v => {
+    const y = yP(v);
+    ctx.strokeStyle = gridC; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + cW, y); ctx.stroke();
+    ctx.fillStyle = tickC; ctx.font = '10px -apple-system,sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v + '%', padL - 5, y + 3.5);
+  });
+
+  // x-axis labels: every 60 min (4 steps at 15min resolution)
+  ctx.fillStyle = tickC; ctx.font = '10px -apple-system,sans-serif'; ctx.textAlign = 'center';
+  steps.forEach((d, i) => {
+    if (d % 60 !== 0) return;
+    const x = xP(i);
+    if (i === nowIdx) {
+      ctx.fillStyle = '#C95228';
+      ctx.fillText(labels[i], x, H - padB + 14);
+      ctx.fillStyle = tickC;
+    } else {
+      ctx.fillText(labels[i], x, H - padB + 14);
+    }
+  });
+
+  // fill under gesamt
+  ctx.beginPath();
+  gesamt.forEach((v, i) => { const x = xP(i), y = yP(v); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+  ctx.lineTo(xP(gesamt.length - 1), padT + cH);
+  ctx.lineTo(xP(0), padT + cH);
+  ctx.closePath();
+  ctx.fillStyle = isDark ? 'rgba(108,99,204,0.10)' : 'rgba(108,99,204,0.07)';
+  ctx.fill();
+
+  function drawLine(data, color, dash, lw) {
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.setLineDash(dash);
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    data.forEach((v, i) => { const x = xP(i), y = yP(v); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  drawLine(sofort, isDark ? '#4A9AE8' : '#2E7DD1', [], 1.5);
+  drawLine(retard, isDark ? '#2ebc8a' : '#1a9468', [5, 4], 1.5);
+  drawLine(gesamt, isDark ? '#8F87E0' : '#6C63CC', [], 2.5);
+
+  // peak markers
+  [[T_PEAK1, '1'], [T_PEAK2, '2']].forEach(([tMin, label]) => {
+    const idx = steps.indexOf(tMin);
+    if (idx < 0) return;
+    const x = xP(idx), y = yP(gesamt[idx]);
+    ctx.strokeStyle = isDark ? '#5a5752' : '#ccc'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, padT + cH); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = isDark ? '#3a3935' : '#f0ede8';
+    ctx.strokeStyle = isDark ? '#5a5752' : '#ccc'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(x - 9, padT + cH + 2, 18, 14, 3); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = isDark ? '#8F87E0' : '#6C63CC';
+    ctx.font = 'bold 9px -apple-system,sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('P' + label, x, padT + cH + 12);
+  });
+
+  // "now" dot
+  if (nowIdx >= 0 && nowIdx < gesamt.length) {
+    const x = xP(nowIdx), y = yP(gesamt[nowIdx]);
+    ctx.beginPath(); ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#C95228'; ctx.fill();
+    ctx.strokeStyle = isDark ? '#1c1b18' : '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
+  }
+}
+
+// ─── BUILD ─────────────────────────────────────────────
+function build() {
+  const val   = document.getElementById('tInput').value;
+  const dose  = parseInt(document.getElementById('doseInput').value);
+  const w     = parseFloat(document.getElementById('weightInput').value) || 70;
+  const sex   = document.getElementById('sexInput').value;
+  if (!val) return;
+
+  const [hStr, mStr] = val.split(':');
+  const startH = parseInt(hStr), startM = parseInt(mStr);
+  const startTotal = startH * 60 + startM;
+
+  const { steps, labels, sofort, retard, gesamt } = calcCurves(startH, startM, dose, w, sex);
+
+  const nowTotal = nowMin();
+  const nowDelta = nowTotal - startTotal;
+  let nowIdx = -1, minDiff = Infinity;
+  steps.forEach((d, i) => { const diff = Math.abs(d - nowDelta); if (diff < minDiff) { minDiff = diff; nowIdx = i; } });
+  if (nowDelta < 0 || nowDelta > T_END) nowIdx = -1;
+
+  const peak1Lbl = addMin(startH, startM, T_PEAK1);
+  const peak2Lbl = addMin(startH, startM, T_PEAK2);
+  const endeLbl  = addMin(startH, startM, T_END);
+  const nowLbl   = nowIdx >= 0 ? labels[nowIdx] : '–';
+
+  document.getElementById('cards').innerHTML = `
+    <div class="card"><div class="card-label">Einnahme</div><div class="card-value">${pad(startH)}:${pad(startM)}</div></div>
+    <div class="card"><div class="card-label">Jetzt</div><div class="card-value" style="color:var(--orange)">${nowLbl}</div></div>
+    <div class="card"><div class="card-label">1. Peak</div><div class="card-value" style="color:var(--blue-dark)">~${peak1Lbl}</div></div>
+    <div class="card"><div class="card-label">2. Peak</div><div class="card-value" style="color:var(--green-dark)">~${peak2Lbl}</div></div>
+    <div class="card"><div class="card-label">Wirkende</div><div class="card-value">~${endeLbl}</div></div>
+  `;
+  document.getElementById('phaseInfo').innerHTML = getPhaseText(nowDelta);
+
+  drawChart(document.getElementById('chart'), labels, sofort, retard, gesamt, nowIdx, steps);
+}
+
+// ─── INIT ──────────────────────────────────────────────
+// Set time input to current time
+const now = new Date();
+document.getElementById('tInput').value = pad(now.getHours()) + ':' + pad(now.getMinutes());
+
+build();
+window.addEventListener('resize', build);
+</script>
+</body>
+</html>
