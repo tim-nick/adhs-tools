@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ritalin Verlauf">
+<title>Ritalin adult – Wirkungsverlauf</title>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --text: #1a1916;
+    --text2: #6b6860;
+    --text3: #9b9890;
+    --border: rgba(0,0,0,0.08);
+    --blue: #378ADD;
+    --green: #1D9E75;
+    --purple: #7F77DD;
+    --orange: #D85A30;
+    --blue-dark: #185FA5;
+    --green-dark: #0F6E56;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141412;
+      --surface: #1e1d1a;
+      --surface2: #28271f;
+      --text: #f0ede8;
+      --text2: #9b9890;
+      --text3: #6b6860;
+      --border: rgba(255,255,255,0.08);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    padding: env(safe-area-inset-top, 16px) 16px env(safe-area-inset-bottom, 24px);
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 20px;
+  }
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .input-row label {
+    font-size: 14px;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+  input[type="time"] {
+    font-size: 17px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    -webkit-appearance: none;
+    flex: 1;
+    min-width: 130px;
+  }
+  input[type="time"]:focus { border-color: var(--blue); }
+  button {
+    font-size: 15px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    -webkit-appearance: none;
+  }
+  button:active { opacity: 0.8; }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+  .card-label {
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .card-value {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .legend-line {
+    width: 20px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .chart-wrap {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 8px 8px;
+    margin-bottom: 12px;
+  }
+  canvas { display: block; width: 100% !important; }
+  .note {
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.5;
+    text-align: center;
+  }
+  .phase-info {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+    border: 1px solid var(--border);
+  }
+  .phase-info strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<h1>Ritalin adult</h1>
+<p class="subtitle">Wirkungsverlauf über den Tag</p>
+
+<div class="input-row">
+  <label for="tInput">Einnahme um</label>
+  <input type="time" id="tInput" value="11:30">
+  <button onclick="build()">Berechnen</button>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<div class="phase-info" id="phaseInfo"></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-line" style="background:var(--blue);"></div>Sofortanteil</div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--green);border-top:2px dashed var(--green);height:0;"></div>Retardanteil</div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--purple);height:3px;"></div>Gesamtwirkung</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div>Jetzt</div>
+</div>
+
+<div class="chart-wrap">
+  <canvas id="chart"></canvas>
+</div>
+
+<p class="note">Grobe Schätzung – Dosis, Stoffwechsel und Mahlzeiten können den Verlauf deutlich verändern.</p>
+
+<script>
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function addMin(baseH,baseM,d){
+  const t=baseH*60+baseM+d;
+  return pad(Math.floor(t/60)%24)+':'+pad(t%60);
+}
+
+function nowMin(){
+  const n=new Date(); return n.getHours()*60+n.getMinutes();
+}
+
+function calcCurves(startH,startM){
+  const steps=[];
+  for(let i=0;i<=570;i+=30) steps.push(i);
+  const labels=steps.map(d=>addMin(startH,startM,d));
+
+  const sofort=steps.map(d=>{
+    if(d<30) return Math.round(d/30*20);
+    if(d<60) return Math.round(20+(d-30)/30*65);
+    if(d<90) return Math.round(85+(d-60)/30*15);
+    if(d<120) return 100;
+    if(d<150) return Math.round(100-(d-120)/30*15);
+    if(d<210) return Math.round(85-(d-150)/60*40);
+    if(d<270) return Math.round(45-(d-210)/60*30);
+    if(d<330) return Math.round(15-(d-270)/60*15);
+    return 0;
+  });
+
+  const retard=steps.map(d=>{
+    if(d<60) return Math.round(d/60*5);
+    if(d<120) return Math.round(5+(d-60)/60*15);
+    if(d<180) return Math.round(20+(d-120)/60*30);
+    if(d<240) return Math.round(50+(d-180)/60*35);
+    if(d<300) return Math.round(85+(d-240)/60*15);
+    if(d<330) return 100;
+    if(d<390) return Math.round(100-(d-330)/60*20);
+    if(d<450) return Math.round(80-(d-390)/60*35);
+    if(d<510) return Math.round(45-(d-450)/60*35);
+    if(d<570) return Math.round(10-(d-510)/60*10);
+    return 0;
+  });
+
+  const gesamt=steps.map((_,i)=>Math.min(100,Math.round((sofort[i]+retard[i])*0.58)));
+  return {steps,labels,sofort,retard,gesamt};
+}
+
+function getPhaseText(nowDelta){
+  if(nowDelta<0) return 'Du hast das Medikament noch nicht eingenommen.';
+  if(nowDelta<30) return '<strong>Phase: Einnahme</strong> – Wirkstoff wird gerade aufgenommen.';
+  if(nowDelta<90) return '<strong>Phase: Einsetzen</strong> – Der Sofortanteil beginnt zu wirken.';
+  if(nowDelta<150) return '<strong>Phase: 1. Peak</strong> – Der Sofortanteil ist auf dem Höhepunkt. Beste Konzentrationsfenster.';
+  if(nowDelta<240) return '<strong>Phase: Übergang</strong> – Sofortanteil klingt ab, Retardanteil baut sich auf.';
+  if(nowDelta<390) return '<strong>Phase: 2. Peak</strong> – Der Retardanteil ist jetzt voll aktiv. Zweites gutes Konzentrationsfenster.';
+  if(nowDelta<510) return '<strong>Phase: Abklingen</strong> – Wirkung lässt langsam nach.';
+  if(nowDelta<=570) return '<strong>Phase: Fast vorbei</strong> – Nur noch Restwirkung. Gute Zeit für Entspannung.';
+  return '<strong>Wirkung beendet</strong> – Der Wirkstoff ist weitgehend abgebaut.';
+}
+
+function drawChart(canvas, labels, sofort, retard, gesamt, nowIdx){
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 16;
+  const H = 220;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W+'px';
+  canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const textColor = isDark ? '#6b6860' : '#9b9890';
+  const labelColor = isDark ? '#9b9890' : '#6b6860';
+
+  const padL=36, padR=10, padT=10, padB=38;
+  const cW=W-padL-padR, cH=H-padT-padB;
+
+  function xPos(i){ return padL + (i/(labels.length-1))*cW; }
+  function yPos(v){ return padT + (1-v/100)*cH; }
+
+  // grid lines
+  ctx.strokeStyle=gridColor; ctx.lineWidth=1;
+  [0,25,50,75,100].forEach(v=>{
+    const y=yPos(v);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+cW,y); ctx.stroke();
+    ctx.fillStyle=textColor; ctx.font='10px -apple-system,sans-serif';
+    ctx.textAlign='right'; ctx.fillText(v+'%', padL-4, y+4);
+  });
+
+  // x labels – every 2 steps
+  ctx.fillStyle=textColor; ctx.font='10px -apple-system,sans-serif'; ctx.textAlign='center';
+  labels.forEach((lbl,i)=>{
+    if(i%2!==0) return;
+    const x=xPos(i);
+    if(i===nowIdx){
+      ctx.fillStyle='#D85A30';
+      ctx.fillText(lbl, x, H-padB+14);
+      ctx.fillStyle=textColor;
+    } else {
+      ctx.fillText(lbl, x, H-padB+14);
+    }
+  });
+
+  function drawLine(data, color, dash, width){
+    ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash);
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    data.forEach((v,i)=>{
+      const x=xPos(i), y=yPos(v);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // fill under gesamt
+  ctx.beginPath();
+  gesamt.forEach((v,i)=>{ const x=xPos(i),y=yPos(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.lineTo(xPos(gesamt.length-1), yPos(0));
+  ctx.lineTo(xPos(0), yPos(0));
+  ctx.closePath();
+  ctx.fillStyle = isDark ? 'rgba(127,119,221,0.12)' : 'rgba(127,119,221,0.08)';
+  ctx.fill();
+
+  drawLine(sofort, '#378ADD', [], 1.5);
+  drawLine(retard, '#1D9E75', [5,4], 1.5);
+  drawLine(gesamt, '#7F77DD', [], 2.5);
+
+  // now dot
+  if(nowIdx>=0){
+    const x=xPos(nowIdx), y=yPos(gesamt[nowIdx]);
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle='#D85A30'; ctx.fill();
+    ctx.strokeStyle='#ffffff'; ctx.lineWidth=1.5; ctx.stroke();
+  }
+}
+
+function build(){
+  const val = document.getElementById('tInput').value;
+  if(!val) return;
+  const [hStr,mStr] = val.split(':');
+  const startH=parseInt(hStr), startM=parseInt(mStr);
+  const startTotal=startH*60+startM;
+  const {steps,labels,sofort,retard,gesamt}=calcCurves(startH,startM);
+
+  const nowTotal=nowMin();
+  const nowDelta=nowTotal-startTotal;
+  let nowIdx=-1, minDiff=Infinity;
+  steps.forEach((d,i)=>{ const diff=Math.abs(d-nowDelta); if(diff<minDiff){minDiff=diff;nowIdx=i;} });
+  if(nowDelta<0||nowDelta>570) nowIdx=-1;
+
+  const peak1=addMin(startH,startM,120);
+  const peak2=addMin(startH,startM,330);
+  const ende=addMin(startH,startM,510);
+  const nowLbl=nowIdx>=0?labels[nowIdx]:'–';
+
+  document.getElementById('cards').innerHTML=`
+    <div class="card"><div class="card-label">Einnahme</div><div class="card-value">${pad(startH)}:${pad(startM)}</div></div>
+    <div class="card"><div class="card-label">Jetzt</div><div class="card-value" style="color:var(--orange)">${nowLbl}</div></div>
+    <div class="card"><div class="card-label">1. Peak</div><div class="card-value" style="color:var(--blue-dark)">~${peak1}</div></div>
+    <div class="card"><div class="card-label">2. Peak</div><div class="card-value" style="color:var(--green-dark)">~${peak2}</div></div>
+    <div class="card"><div class="card-label">Wirkende</div><div class="card-value">~${ende}</div></div>
+  `;
+
+  document.getElementById('phaseInfo').innerHTML=getPhaseText(nowDelta);
+
+  const canvas=document.getElementById('chart');
+  drawChart(canvas,labels,sofort,retard,gesamt,nowIdx);
+}
+
+// Trigger on time input change
+document.getElementById('tInput').addEventListener('change', build);
+
+// Initial render
+build();
+
+// Redraw on resize
+window.addEventListener('resize', build);
+</script>
+</body>
+</html>
