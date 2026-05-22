@@ -205,7 +205,7 @@ function nowMin(){ const n=new Date(); return n.getHours()*60+n.getMinutes(); }
 function coslerp(a,b,t){ return a+(b-a)*(1-Math.cos(Math.PI*t))/2; }
 function seg(d,d0,d1,v0,v1){ return coslerp(v0,v1,(d-d0)/(d1-d0)); }
 
-const TP_PEAK1=120, TP_TAL=216, TP_PEAK2=330, TP_END=570;
+const TP_PEAK1=120, TP_TAL=216, TP_PEAK2=330, TP_END=570; // 510 = 8,5h
 
 function calcCurves(startH,startM){
   const steps=[]; for(let i=0;i<=TP_END;i+=15) steps.push(i);
@@ -320,7 +320,7 @@ function build(){
   steps.forEach((d,i)=>{ const diff=Math.abs(d-nowDelta); if(diff<minDiff){minDiff=diff;nowIdx=i;} });
   if(nowDelta<0||nowDelta>TP_END) nowIdx=-1;
   const ac=document.documentElement.getAttribute('data-theme')==='dark'?'#E8784A':'#CC5500';
-  document.getElementById('cNow').textContent=nowIdx>=0?labels[nowIdx]:'–';
+  const nm=nowMin(); document.getElementById('cNow').textContent=nowIdx>=0?pad(Math.floor(nm/60)%24)+':'+pad(nm%60):'–';
   document.getElementById('cNow').style.color=ac;
   document.getElementById('cP1').textContent='~'+addMin(startH,startM,TP_PEAK1);
   document.getElementById('cP2').textContent='~'+addMin(startH,startM,TP_PEAK2);
@@ -344,6 +344,7 @@ const _n=new Date();
 tInput.value=pad(_n.getHours())+':'+pad(_n.getMinutes());
 build();
 window.addEventListener('resize', build);
+setInterval(build, 60000);
 </script>
 </body>
 </html>
